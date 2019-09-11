@@ -2,9 +2,10 @@ package com.educaweb.course.services;
 
 import java.util.List;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.ResourceAccessException;
 
 import com.educaweb.course.entities.User;
 import com.educaweb.course.repositories.UserRepository;
@@ -33,9 +34,14 @@ public class UserService {
 	}
 	
 	public User update(Long id, User obj) {
+		try {
 		User entity = repository.getOne(id);
 		updateData(entity, obj);
 		return repository.save(entity);
+		} catch(EntityNotFoundException e) {
+			e.printStackTrace();
+			throw new ResourceNotFoundException(id);
+		}
 	}
 
 	private void updateData(User entity, User obj) {
