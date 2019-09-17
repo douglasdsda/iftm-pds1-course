@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.educaweb.course.dto.UserDTO;
 import com.educaweb.course.entities.User;
 import com.educaweb.course.services.UserService;
 
@@ -26,17 +27,17 @@ public class UserResource {
 	private UserService service;
 
 	@GetMapping
-	public ResponseEntity<List<User>> findAll() {
-		List<User> users = service.findAll();
+	public ResponseEntity<List<UserDTO>> findAll() {
+		List<UserDTO> dtos = service.findAll();
 		// return ResponseEntity.ok().body(u);
-		return ResponseEntity.ok().body(users);
+		return ResponseEntity.ok().body(dtos);
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<User> findId(@PathVariable Long id) {
-		User user = service.findById(id);
+	public ResponseEntity<UserDTO> findId(@PathVariable Long id) {
+		UserDTO dto = service.findById(id);
 		// return ResponseEntity.ok().body(u);
-		return ResponseEntity.ok().body(user);
+		return ResponseEntity.ok().body(dto);
 	}
 
 	@PostMapping()
