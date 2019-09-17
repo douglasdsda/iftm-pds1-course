@@ -7,6 +7,7 @@ import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.educaweb.course.dto.UserDTO;
 import com.educaweb.course.entities.User;
@@ -39,20 +40,22 @@ public class UserService {
 		repository.deleteById(id);
 	}
 	
-	public User update(Long id, User obj) {
+	@Transactional
+	public UserDTO update(Long id, UserDTO dto) {
 		try {
 		User entity = repository.getOne(id);
-		updateData(entity, obj);
-		return repository.save(entity);
+		updateData(entity, dto);
+	  entity = repository.save(entity);
+	  	return new UserDTO(entity);
 		} catch(EntityNotFoundException e) {
 			e.printStackTrace();
 			throw new ResourceNotFoundException(id);
 		}
 	}
 
-	private void updateData(User entity, User obj) {
-		entity.setName(obj.getName());
-		entity.setEmail(obj.getEmail());
-		entity.setPhone(obj.getPhone());
+	private void updateData(User entity, UserDTO dto) {
+		entity.setName(dto.getName());
+		entity.setEmail(dto.getEmail());
+		entity.setPhone(dto.getPhone());
 	}
 }
