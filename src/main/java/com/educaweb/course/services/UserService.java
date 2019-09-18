@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.educaweb.course.dto.UserDTO;
+import com.educaweb.course.dto.UserInsertDTO;
 import com.educaweb.course.entities.User;
 import com.educaweb.course.repositories.UserRepository;
 import com.educaweb.course.services.exceptions.ResourceNotFoundException;
@@ -32,8 +33,10 @@ public class UserService {
 		
 	}
 	
-	public User insert(User obj) {
-		return repository.save(obj);
+	public UserDTO insert(UserInsertDTO dto) {
+		User entity = dto.toEntity();
+		entity = repository.save(entity);
+		return new UserDTO(entity);
 	}
 	
 	public void delete(Long id) {
