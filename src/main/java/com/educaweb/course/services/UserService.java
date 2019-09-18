@@ -20,37 +20,36 @@ public class UserService {
 
 	@Autowired
 	private UserRepository repository;
-	
-	public List<UserDTO> findAll(){
-		List<User> list =  repository.findAll();
+
+	public List<UserDTO> findAll() {
+		List<User> list = repository.findAll();
 		return list.stream().map(e -> new UserDTO(e)).collect(Collectors.toList());
-		
 	}
-	
-	public UserDTO findById(Long id){
-		User entity =  repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
+
+	public UserDTO findById(Long id) {
+		User entity = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
 		return new UserDTO(entity);
-		
+
 	}
-	
+
 	public UserDTO insert(UserInsertDTO dto) {
 		User entity = dto.toEntity();
 		entity = repository.save(entity);
 		return new UserDTO(entity);
 	}
-	
+
 	public void delete(Long id) {
 		repository.deleteById(id);
 	}
-	
+
 	@Transactional
 	public UserDTO update(Long id, UserDTO dto) {
 		try {
-		User entity = repository.getOne(id);
-		updateData(entity, dto);
-	  entity = repository.save(entity);
-	  	return new UserDTO(entity);
-		} catch(EntityNotFoundException e) {
+			User entity = repository.getOne(id);
+			updateData(entity, dto);
+			entity = repository.save(entity);
+			return new UserDTO(entity);
+		} catch (EntityNotFoundException e) {
 			e.printStackTrace();
 			throw new ResourceNotFoundException(id);
 		}

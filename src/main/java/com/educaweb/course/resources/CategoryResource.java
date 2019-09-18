@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.educaweb.course.entities.Category;
+import com.educaweb.course.dto.CategoryDTO;
 import com.educaweb.course.services.CategoryService;
 
 @RestController
@@ -25,26 +25,32 @@ public class CategoryResource {
 	@Autowired
 	private CategoryService service;
 	
+
+	
 	@GetMapping
-	public ResponseEntity<List<Category>> findAll(){
-		List<Category> users = service.findAll();
+	public ResponseEntity<List<CategoryDTO>> findAll(){
+		List<CategoryDTO> dtos = service.findAll();
 		//return ResponseEntity.ok().body(u);
-		return ResponseEntity.ok().body(users);
+		return ResponseEntity.ok().body(dtos);
 	}
+	
+
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<Category> findId(@PathVariable Long id){
-		Category user = service.findById(id);
+	public ResponseEntity<CategoryDTO> findId(@PathVariable Long id){
+		CategoryDTO dto = service.findById(id);
 		//return ResponseEntity.ok().body(u);
-		return ResponseEntity.ok().body(user);
+		return ResponseEntity.ok().body(dto);
 	}
 	
-	@PostMapping()
-	public ResponseEntity<Category> insert(@RequestBody Category obj) {
-		obj = service.insert(obj);
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
 
-		return ResponseEntity.created(uri).body(obj);
+	
+	@PostMapping()
+	public ResponseEntity<CategoryDTO> insert(@RequestBody CategoryDTO dto) {
+		CategoryDTO  newDto = service.insert(dto);
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(newDto.getId()).toUri();
+
+		return ResponseEntity.created(uri).body(newDto);
 
 	}
 	
@@ -55,10 +61,11 @@ public class CategoryResource {
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<Category> update(@PathVariable Long id, @RequestBody Category obj){
-		obj = service.update(id, obj);
-		return ResponseEntity.ok().body(obj);
+	public ResponseEntity<CategoryDTO> update(@PathVariable Long id, @RequestBody CategoryDTO dto){
+		dto = service.update(id, dto);
+		return ResponseEntity.ok().body(dto);
 	}
+	
 	
 
 }
