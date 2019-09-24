@@ -3,10 +3,6 @@ package com.educaweb.course.dto;
 import java.io.Serializable;
 import java.time.Instant;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-
 import com.educaweb.course.entities.Order;
 import com.educaweb.course.entities.User;
 import com.educaweb.course.entities.enums.OrdersStatus;
@@ -16,8 +12,6 @@ public class OrderDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "GMT")

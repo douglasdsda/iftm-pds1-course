@@ -11,7 +11,6 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * douglas
@@ -28,7 +27,6 @@ public class Category implements Serializable {
 
 	private String name;
 
-	@JsonIgnore
 	@ManyToMany(mappedBy = "categories")
 	private Set<Product> products = new HashSet<>();
 
