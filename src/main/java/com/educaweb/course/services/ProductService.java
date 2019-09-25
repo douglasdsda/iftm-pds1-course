@@ -3,6 +3,8 @@ package com.educaweb.course.services;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,20 +23,20 @@ public class ProductService {
 
 	@Autowired
 	private ProductRepository repository;
-	
+
 	@Autowired
 	private CategoryRepository repositoryCategories;
-	
-	public List<ProductDTO> findAll(){
+
+	public List<ProductDTO> findAll() {
 		List<Product> list = repository.findAll();
 		return list.stream().map(e -> new ProductDTO(e)).collect(Collectors.toList());
 	}
-	
-	public ProductDTO findById(Long id){
+
+	public ProductDTO findById(Long id) {
 		Product entity = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
 		return new ProductDTO(entity);
 	}
-	
+
 	@Transactional
 	public ProductDTO insert(ProductCategoriesDTO dto) {
 		Product entity = dto.toEntity();
@@ -43,14 +45,40 @@ public class ProductService {
 		return new ProductDTO(entity);
 	}
 
+
+
+	@Transactional
+	public ProductDTO update(Long id, ProductCategoriesDTO dto) {
+		try {
+			Product entity = repository.getOne(id);
+			updateData(entity, dto);
+			entity = repository.save(entity);
+			return new ProductDTO(entity);
+		} catch (EntityNotFoundException e) {
+			e.printStackTrace();
+			throw new ResourceNotFoundException(id);
+		}
+	}
+
+	private void updateData(Product entity, ProductCategoriesDTO dto) {
+		entity.setName(dto.getName());
+		entity.setDescription(dto.getDescription());
+		entity.setPrice(dto.getPrice());
+		entity.setImgUrl(dto.getImgUrl());
+		
+		if(dto.getCategories() != null && dto.getCategories().size() > 0) {
+			setProductCategories(entity, dto.getCategories());
+		}
+
+	}
 	
 	private void setProductCategories(Product entity, List<CategoryDTO> categories) {
 		entity.getCategories().clear();
-		
-		for(CategoryDTO dto: categories) {
+
+		for (CategoryDTO dto : categories) {
 			Category category = repositoryCategories.getOne(dto.getId());
 			entity.getCategories().add(category);
 		}
 	}
-	
+
 }
