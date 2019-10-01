@@ -2,15 +2,31 @@ package com.educaweb.course.dto;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+
+import org.hibernate.validator.constraints.Length;
+
 import com.educaweb.course.entities.User;
 
 public class UserInsertDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private Long id;
+	
+	@NotEmpty(message = "cat't be empty")
+	@Length(min = 5, max = 80, message = "lenght must be betwen 5 and 80.")
 	private String name;
+	
+	@NotEmpty(message = "cat't be empty")
+	@Email(message = "invalid email")
 	private String email;
+	
+	@NotEmpty(message = "cat't be empty")
+	@Length(min = 8, max = 80, message = "lenght must be betwen 5 and 20.")	
 	private String phone;
+	
+	@NotEmpty(message = "cat't be empty")
 	private String password;
 
 	public UserInsertDTO() {
