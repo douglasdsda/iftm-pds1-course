@@ -6,4 +6,6 @@ import com.educaweb.course.entities.User;
 
 public interface UserRepository extends JpaRepository<User, Long>{
 
+	User findByEmail(String email);
+
 }
