@@ -26,7 +26,7 @@ public class AuthService {
 	public TokenDTO authenticate(CredentialsDTO dto) {
 
 		try {
-			var authToken = new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword());
+			UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword());
 			authenticationManager.authenticate(authToken);
 
 			String token = jwtUtil.generateToken(dto.getEmail());

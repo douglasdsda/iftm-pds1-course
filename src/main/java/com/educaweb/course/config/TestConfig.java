@@ -80,7 +80,7 @@ public class TestConfig implements CommandLineRunner {
 		userRepository.saveAll(Arrays.asList(u1, u2));
 		
 		Role r1 = new Role(null , "ROLE_CLIENT");
-		Role r2 = new Role(null, "ROLE_CLIENT");
+		Role r2 = new Role(null, "ROLE_ADMIN");
 		
 		roleRepository.saveAll(Arrays.asList(r1, r2));
 		
