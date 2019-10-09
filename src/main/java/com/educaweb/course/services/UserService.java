@@ -30,6 +30,9 @@ public class UserService implements UserDetailsService {
 
 	@Autowired
 	private UserRepository repository;
+	
+	@Autowired
+	private AuthService authService;
 
 	public List<UserDTO> findAll() {
 		List<User> list = repository.findAll();
@@ -37,6 +40,7 @@ public class UserService implements UserDetailsService {
 	}
 
 	public UserDTO findById(Long id) {
+		authService.validateSelfOrAdmin(id);
 		User entity = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
 		return new UserDTO(entity);
 
@@ -62,6 +66,7 @@ public class UserService implements UserDetailsService {
 
 	@Transactional
 	public UserDTO update(Long id, UserDTO dto) {
+		authService.validateSelfOrAdmin(id);
 		try {
 			User entity = repository.getOne(id);
 			updateData(entity, dto);
