@@ -33,5 +33,11 @@ public class OrderResource {
 		OrderDTO dto = service.findById(id);
 		return ResponseEntity.ok().body(dto);
 	}
+	
+	@GetMapping("/myorders")
+	public ResponseEntity<List<OrderDTO>> findByClient() {
+		List<OrderDTO> list = service.findByClient();
+		return ResponseEntity.ok().body(list);
+	}
 
 }
