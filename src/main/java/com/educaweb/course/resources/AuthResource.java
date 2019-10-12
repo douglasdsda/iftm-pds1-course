@@ -18,15 +18,21 @@ public class AuthResource {
 	@Autowired
 	private AuthService service;
 	
-	@PostMapping("/login")
+	@PostMapping(value = "/login")
 	public ResponseEntity<TokenDTO> login(@RequestBody CredentialsDTO dto) {
 		TokenDTO tokenDTO = service.authenticate(dto);
 		return ResponseEntity.ok().body(tokenDTO);
 	}
 	
-	@PostMapping("/refresh")
+	@PostMapping(value = "/refresh")
 	public ResponseEntity<TokenDTO> refresh() {
 		TokenDTO tokenDTO = service.refreshToken();
 		return ResponseEntity.ok().body(tokenDTO);
+	}
+	
+	@PostMapping(value = "/forgot")
+	public ResponseEntity<Void> refresh(@RequestBody CredentialsDTO dto) {
+		 service.sendNewPassword(dto.getEmail());
+		return ResponseEntity.noContent().build();
 	}
 }

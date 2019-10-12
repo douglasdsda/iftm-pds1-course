@@ -1,11 +1,16 @@
 package com.educaweb.course.services;
 
+import java.util.Random;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,9 +22,12 @@ import com.educaweb.course.repositories.UserRepository;
 import com.educaweb.course.security.JWTUtil;
 import com.educaweb.course.services.exceptions.JWTAuthenticationException;
 import com.educaweb.course.services.exceptions.JWTAuthorizationException;
+import com.educaweb.course.services.exceptions.ResourceNotFoundException;
 
 @Service
 public class AuthService {
+	
+	private static final Logger LOG = LoggerFactory.getLogger(AuthService.class);
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
@@ -29,6 +37,9 @@ public class AuthService {
 
 	@Autowired
 	private UserRepository repository;
+	
+	@Autowired
+	private BCryptPasswordEncoder passwordEncoder;
 
 	@Transactional(readOnly = true)
 	public TokenDTO authenticate(CredentialsDTO dto) {
@@ -75,10 +86,47 @@ public class AuthService {
 			throw new JWTAuthorizationException("Acess denied");
 		}
 	}
-	
+
 	public TokenDTO refreshToken() {
 		User user = authenticated();
 		return new TokenDTO(user.getEmail(), jwtUtil.generateToken(user.getEmail()));
+	}
+	
+	@Transactional
+	public void sendNewPassword(String email) {
+		User user = repository.findByEmail(email);
+		if (user == null) {
+			throw new ResourceNotFoundException("Email not found.");
+		}
+		
+		String newPass = newPassword();
+		user.setPassword(passwordEncoder.encode(newPass));
+		
+		repository.save(user);
+		LOG.info("New password: " + newPass);
+	}
+
+	private String newPassword() {
+		char[] vect = new char[10];
+
+		for (int i = 0; i < 10; i++) {
+			vect[i] = randomChar();
+		}
+		return new String(vect);
+	}
+	
+	
+
+	private char randomChar() {
+		Random rand = new Random();
+		int opt = rand.nextInt(3);
+		if (opt == 0) {
+			return  (char) (rand.nextInt(10) + 48);
+		} else if (opt == 1) {
+			return  (char) (rand.nextInt(26) + 65);
+		} else {
+			return  (char) (rand.nextInt(26) + 97);
+		}
 	}
 
 }
