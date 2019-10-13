@@ -14,6 +14,7 @@ import com.educaweb.course.entities.Order;
 import com.educaweb.course.entities.OrderItem;
 import com.educaweb.course.entities.User;
 import com.educaweb.course.repositories.OrderRepository;
+import com.educaweb.course.repositories.UserRepository;
 import com.educaweb.course.services.exceptions.ResourceNotFoundException;
 
 @Service
@@ -24,6 +25,9 @@ public class OrderService {
 	
 	@Autowired
 	private AuthService authService;
+	
+	@Autowired
+	private UserRepository userRepository;
 	
 	public List<OrderDTO> findAll() {
 		List<Order> list = repository.findAll();
@@ -49,5 +53,12 @@ public class OrderService {
 		Set<OrderItem> set = order.getItems();
 		
 		return set.stream().map(e -> new OrderItemDTO(e)).collect(Collectors.toList());
+	}
+
+	@Transactional(readOnly = true)
+	public List<OrderDTO> findByClientId(Long clientId) {
+		User client = userRepository.getOne(clientId);
+		List<Order> list = repository.findByClient(client);
+		return list.stream().map(e -> new OrderDTO(e)).collect(Collectors.toList());
 	}
 }
