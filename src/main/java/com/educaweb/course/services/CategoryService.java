@@ -1,17 +1,21 @@
 package com.educaweb.course.services;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
-import javax.transaction.Transactional;
+//import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.educaweb.course.dto.CategoryDTO;
 import com.educaweb.course.entities.Category;
+import com.educaweb.course.entities.Product;
 import com.educaweb.course.repositories.CategoryRepository;
+import com.educaweb.course.repositories.ProductRepository;
 import com.educaweb.course.services.exceptions.ResourceNotFoundException;
 
 @Service
@@ -19,6 +23,9 @@ public class CategoryService {
 
 	@Autowired
 	private CategoryRepository repository;
+	
+	@Autowired
+	private ProductRepository productRepository;
 	
 	
 	public List<CategoryDTO> findAll() {
@@ -63,5 +70,12 @@ public class CategoryService {
 
 	private void updateData(Category entity, CategoryDTO obj) {
 		entity.setName(obj.getName());
+	}
+
+	@Transactional(readOnly = true)
+	public List<CategoryDTO> findByProduct(Long productId) {
+		Product p = productRepository.getOne(productId); 
+		Set<Category> set = p.getCategories();
+		return set.stream().map(e -> new CategoryDTO(e)).collect(Collectors.toList());
 	}
 }
