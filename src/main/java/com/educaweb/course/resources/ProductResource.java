@@ -1,6 +1,7 @@
 package com.educaweb.course.resources;
 
 import java.net.URI;
+import java.util.List;
 
 import javax.validation.Valid;
 
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.educaweb.course.dto.CategoryDTO;
 import com.educaweb.course.dto.ProductCategoriesDTO;
 import com.educaweb.course.dto.ProductDTO;
 import com.educaweb.course.services.ProductService;
@@ -81,6 +83,27 @@ public class ProductResource {
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	public ResponseEntity<Void> delete(@PathVariable Long id) {
 		service.delete(id);
+		return ResponseEntity.noContent().build();
+	}
+	
+	@PutMapping("/{id}/addcategory")
+	@PreAuthorize("hasAnyRole('ADMIN')")
+	public ResponseEntity<Void> addCategory(@PathVariable Long id, @Valid @RequestBody CategoryDTO dto) {
+		service.addCategory(id, dto);
+		return ResponseEntity.noContent().build();
+	}
+	
+	@PutMapping("/{id}/removecategory")
+	@PreAuthorize("hasAnyRole('ADMIN')")
+	public ResponseEntity<Void> removeCategory(@PathVariable Long id, @Valid @RequestBody CategoryDTO dto) {
+		service.removeCategory(id, dto);
+		return ResponseEntity.noContent().build();
+	}
+	
+	@PutMapping("/{id}/setcategories")
+	@PreAuthorize("hasAnyRole('ADMIN')")
+	public ResponseEntity<Void> setCategory(@PathVariable Long id, @Valid @RequestBody List<CategoryDTO> dto) {
+		service.setCategories(id, dto);
 		return ResponseEntity.noContent().build();
 	}
 

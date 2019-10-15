@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,8 +32,9 @@ public class ProductService {
 	private CategoryRepository repositoryCategories;
 
 	public Page<ProductDTO> findAllPaged(Pageable pageable) {
-		Page <Product> list = repository.findAll(pageable);
-		//return list.stream().map(e -> new ProductDTO(e)).collect(Collectors.toList());
+		Page<Product> list = repository.findAll(pageable);
+		// return list.stream().map(e -> new
+		// ProductDTO(e)).collect(Collectors.toList());
 		return list.map(e -> new ProductDTO(e));
 	}
 
@@ -51,8 +51,6 @@ public class ProductService {
 		return new ProductDTO(entity);
 	}
 
-
-
 	@Transactional
 	public ProductDTO update(Long id, ProductCategoriesDTO dto) {
 		try {
@@ -65,7 +63,7 @@ public class ProductService {
 			throw new ResourceNotFoundException(id);
 		}
 	}
-	
+
 	public void delete(Long id) {
 		try {
 			repository.deleteById(id);
@@ -81,14 +79,13 @@ public class ProductService {
 		entity.setDescription(dto.getDescription());
 		entity.setPrice(dto.getPrice());
 		entity.setImgUrl(dto.getImgUrl());
-		
-		if(dto.getCategories() != null && dto.getCategories().size() > 0) {
+
+		if (dto.getCategories() != null && dto.getCategories().size() > 0) {
 			setProductCategories(entity, dto.getCategories());
 		}
 
 	}
-	
-	
+
 	private void setProductCategories(Product entity, List<CategoryDTO> categories) {
 		entity.getCategories().clear();
 
@@ -103,6 +100,31 @@ public class ProductService {
 		Category category = repositoryCategories.getOne(categoryId);
 		Page<Product> products = repository.findByCategory(category, pageable);
 		return products.map(e -> new ProductDTO(e));
+	}
+
+	@Transactional
+	public void addCategory(Long id, CategoryDTO dto) {
+		Product product = repository.getOne(id);
+		Category category = repositoryCategories.getOne(dto.getId());
+		product.getCategories().add(category);
+		repository.save(product);
+
+	}
+	
+	@Transactional
+	public void removeCategory(Long id, CategoryDTO dto) {
+		Product product = repository.getOne(id);
+		Category category = repositoryCategories.getOne(dto.getId());
+		product.getCategories().remove(category);
+		repository.save(product);
+
+	}
+	
+	@Transactional
+	public void setCategories(Long id, List<CategoryDTO> dto) {
+		Product product = repository.getOne(id);
+		setProductCategories(product, dto);
+		repository.save(product);
 	}
 
 }
