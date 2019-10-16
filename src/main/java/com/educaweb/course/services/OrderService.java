@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -88,5 +90,22 @@ public class OrderService {
 		orderItemRepository.saveAll(order.getItems());
 
 		return new OrderDTO(order);
+	}
+	
+	@Transactional
+	public OrderDTO update(Long id, OrderDTO dto) {
+		try {
+		Order entity = repository.getOne(id);
+		updateData(entity, dto);
+		entity =  repository.save(entity);
+		return new OrderDTO(entity);
+		} catch(EntityNotFoundException e) {
+			e.printStackTrace();
+			throw new ResourceNotFoundException(id);
+		}
+	}
+
+	private void updateData(Order entity, OrderDTO dto) {
+		entity.setOrdersStatus(dto.getOrdersStatus());
 	}
 }
